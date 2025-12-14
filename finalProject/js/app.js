@@ -46,6 +46,32 @@ renderPlan();
 
 //search meals
 
+//auto fill week with premade items from json
+// Auto-fill button click handler
+$("#autoFillBtn").click(() => {
+    // Call the function from sampleMeals.js to get the array
+    const sampleMeals = getSampleMeals();
+    
+    const days = Object.keys(mealPlan);
+    const mealTypes = ['breakfast', 'lunch', 'dinner'];
+    
+    // Filter meals by type
+    const breakfasts = sampleMeals.filter(m => m.category === 'Breakfast');
+    const lunches = sampleMeals.filter(m => m.category === 'Lunch');
+    const dinners = sampleMeals.filter(m => m.category === 'Dinner');
+    
+    //populate each day
+    days.forEach((day, dayIndex) => {
+        mealPlan[day].breakfast = breakfasts[dayIndex % breakfasts.length] || null;
+        mealPlan[day].lunch = lunches[dayIndex % lunches.length] || null;
+        mealPlan[day].dinner = dinners[dayIndex % dinners.length] || null;
+    });
+    
+    localStorage.setItem("mealPlan", JSON.stringify(mealPlan));
+    renderPlan();
+    alert("Week auto-filled with sample meals!");
+});
+
 
 // Populate categories dropdown for extra search
 $.get('https://www.themealdb.com/api/json/v1/1/list.php?c=list', data => {
